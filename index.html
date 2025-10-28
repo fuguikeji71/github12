@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WePoker德州APP下载 - 随时随地畅享服务</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind 自定义主题配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            }
+            .btn-hover {
+                @apply transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
+            }
+            .blur-slider-item {
+                opacity: 0;
+                transform: scale(1.05);
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: blur(4px) brightness(0.85);
+                -webkit-filter: blur(4px) brightness(0.85);
+                transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+            }
+            .blur-slider-item.active {
+                opacity: 1;
+                transform: scale(1);
+                z-index: 1; /* 轮播图层级 */
+            }
+            .slider-dot-active {
+                width: 2rem !important;
+                background-color: #3B82F6 !important;
+            }
+            .download-buttons {
+                position: fixed;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 20%; /* 下方上来20%的位置 */
+                z-index: 40; /* 按钮层级 - 最高 */
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                width: 90%;
+                max-width: 800px;
+            }
+            .download-button {
+                flex: 1;
+                min-width: 120px;
+            }
+            /* 文字区域样式 - 位于按钮上方10%位置 */
+            .text-content {
+                position: fixed;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 30%; /* 按钮在20%，文字在30%即按钮上方10% */
+                z-index: 30; /* 文字层级在按钮之下，图片之上 */
+                width: 90%;
+                max-width: 600px;
+            }
+            /* 主图片容器样式 - 高度到中间50% */
+            .main-image-container {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 50vh; /* 视口高度的50% */
+                width: 100%;
+                z-index: 10; /* 图片框架层级 - 轮播图之上，文字按钮之下 */
+                overflow: hidden;
+            }
+            .main-image {
+                width: 100%;
+                height: 100%;
+                object-fit: contain; /* 保持图片比例，完整显示在容器内 */
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans text-dark m-0 p-0">
+    <!-- 导航栏：修改为透明背景，Logo容器透明，右侧改为客服图标按钮 -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-transparent shadow-sm transition-all duration-300">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <!-- 左侧Logo：Logo容器改为透明（移除渐变背景），保留尺寸和布局 -->
+        <div class="flex items-center space-x-2">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden bg-transparent">
+                <img src="./tu/favicon.ico" alt="WPK Logo" class="w-full h-full object-cover">
+            </div>
+            <!-- Logo文字保留渐变效果，确保在透明背景上可见 -->
+            <span class="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">WePoker德州扑克</span>
+        </div>
+            
+        <!-- 右侧按钮：改为客服图标，点击跳转百度 -->
+        <button class="md:hidden text-white focus:outline-none" id="customerServiceBtn" aria-label="联系客服（跳转百度）">
+            <i class="fa fa-headset text-2xl"></i>
+        </button>
+    </div>
+</nav>
+
+    <!-- 英雄区域（含模糊图片轮换） -->
+    <header class="pt-28 pb-16 md:pt-36 md:pb-24 px-4 relative overflow-hidden min-h-screen flex items-center">
+        <!-- 模糊图片轮换容器 -->
+        <div class="absolute inset-0 w-full h-full z-0">
+            <div class="blur-slider relative w-full h-full">
+                <!-- 轮换图片1 -->
+                <img src="./tu/gd1.png" alt="" class="blur-slider-item active" data-index="0">
+                <!-- 轮换图片2 -->
+                <img src="./tu/gd2.png" alt="" class="blur-slider-item" data-index="1">
+                <!-- 轮换图片3 -->
+                <img src="./tu/gd3.png" alt="" class="blur-slider-item" data-index="2">
+                <!-- 轮换图片4 -->
+                <img src="./tu/gd4.png" alt="" class="blur-slider-item" data-index="3">
+            </div>
+            <!-- 遮罩层（增强文字可读性） -->
+            <div class="absolute inset-0 bg-dark/30 z-1"></div>
+        </div>
+
+        <!-- 文字内容区（位于按钮上方10%位置） -->
+        <div class="text-content text-center">
+<h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-shadow mb-6 text-white">
+    全新体验
+    <span class="bg-gradient-to-r from-cyan-300 to-pink-300 bg-clip-text text-transparent">尽在指尖</span>
+</h1>
+                        <h1 class="text-[clamp(2.6rem,6.5vw,4.55rem)] font-bold leading-tight text-shadow mb-6 text-yellow-300">
+    俱乐部房间
+    <span class="bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">8277977</span>
+</h1>
+            
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-shadow mb-6 text-white">
+                下载我们的应用
+                <span class="bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">，随时随地享受高效便捷的服务。</span>
+            </h1>
+
+        </div>
+
+        <!-- 下载按钮区域（固定在下方20%位置，在文本前方） -->
+        <div class="download-buttons">
+            <!-- 安卓下载按钮 -->
+            <a href="https://web.wpk100.com/" class="download-button bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-xl shadow-lg btn-hover flex items-center justify-center gap-2" id="androidBtn">
+                <i class="fa fa-android text-xl"></i>
+                <span>安卓下载</span>
+            </a>
+            
+            <!-- iOS下载按钮 -->
+            <a href="https://web.wpk100.com/" class="download-button bg-black hover:bg-black/90 text-white font-medium py-3 px-6 rounded-xl shadow-lg btn-hover flex items-center justify-center gap-2" id="iosBtn">
+                <i class="fa fa-apple text-xl"></i>
+                <span>iOS下载</span>
+            </a>
+            
+            <!-- H5登录按钮 -->
+            <a href="https://h5.wpk.com/" class="download-button bg-white border border-slate-200 hover:border-primary text-slate-700 font-medium py-3 px-6 rounded-xl shadow-md btn-hover flex items-center justify-center gap-2" id="h5Btn">
+                <i class="fa fa-globe text-xl"></i>
+                <span>H5登录</span>
+            </a>
+            
+        </div>
+
+        <!-- 主图片展示（底部到中间50%高度，宽度自适应） -->
+        <div class="main-image-container">
+            <!-- 这里可以替换为您的透明图片 -->
+            <img src="./tu/gd0.png" alt="应用底部透明图片" class="main-image">
+        </div>
+
+        <!-- 模糊轮播控制器（仅保留指示点） -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex items-center justify-center">
+            <div class="flex gap-2">
+                <button class="blur-slider-dot w-2 h-2 rounded-full bg-white/50 slider-dot-active transition-all duration-300" data-index="0"></button>
+                <button class="blur-slider-dot w-2 h-2 rounded-full bg-white/50 transition-all duration-300" data-index="1"></button>
+                <button class="blur-slider-dot w-2 h-2 rounded-full bg-white/50 transition-all duration-300" data-index="2"></button>
+                <button class="blur-slider-dot w-2 h-2 rounded-full bg-white/50 transition-all duration-300" data-index="3"></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- JavaScript -->
+    <script>
+        // 图片轮播功能实现
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.blur-slider-item');
+            const dots = document.querySelectorAll('.blur-slider-dot');
+            let currentIndex = 0;
+            let slideInterval;
+
+            // 初始化轮播
+            function initSlider() {
+                showSlide(currentIndex);
+                startAutoSlide();
+                
+                // 指示点点击事件
+                dots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        goToSlide(index);
+                        resetAutoSlide();
+                    });
+                });
+            }
+
+            // 显示指定幻灯片
+            function showSlide(index) {
+                // 隐藏所有幻灯片
+                slides.forEach(slide => {
+                    slide.classList.remove('active');
+                });
+                
+                // 重置所有指示点
+                dots.forEach(dot => {
+                    dot.classList.remove('slider-dot-active');
+                });
+                
+                // 显示当前幻灯片和激活当前指示点
+                slides[index].classList.add('active');
+                dots[index].classList.add('slider-dot-active');
+            }
+
+            // 跳转到指定幻灯片
+            function goToSlide(index) {
+                currentIndex = index;
+                showSlide(currentIndex);
+            }
+
+            // 下一张幻灯片
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % slides.length;
+                showSlide(currentIndex);
+            }
+
+            // 自动播放（3秒切换一次）
+            function startAutoSlide() {
+                slideInterval = setInterval(nextSlide, 3000);
+            }
+
+            // 重置自动播放计时器
+            function resetAutoSlide() {
+                clearInterval(slideInterval);
+                startAutoSlide();
+            }
+
+            // 设备检测与按钮显示控制
+            function detectDeviceAndShowButtons() {
+                const userAgent = navigator.userAgent.toLowerCase();
+                const androidBtn = document.getElementById('androidBtn');
+                const iosBtn = document.getElementById('iosBtn');
+                const h5Btn = document.getElementById('h5Btn');
+                
+                // 检测是否为移动设备
+                const isMobile = /mobile|android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+                
+                if (!isMobile) {
+                    // 电脑端 - 显示所有3个按钮
+                    androidBtn.style.display = 'flex';
+                    iosBtn.style.display = 'flex';
+                    h5Btn.style.display = 'flex';
+                } else {
+                    // 移动设备 - 检测是安卓还是iOS
+                    const isAndroid = /android/i.test(userAgent);
+                    const isIOS = /iphone|ipad|ipod/i.test(userAgent);
+                    
+                    if (isAndroid) {
+                        // 安卓设备 - 显示安卓和H5按钮
+                        androidBtn.style.display = 'flex';
+                        iosBtn.style.display = 'none';
+                        h5Btn.style.display = 'flex';
+                    } else if (isIOS) {
+                        // iOS设备 - 显示iOS和H5按钮
+                        androidBtn.style.display = 'none';
+                        iosBtn.style.display = 'flex';
+                        h5Btn.style.display = 'flex';
+                    } else {
+                        // 其他移动设备 - 显示所有按钮
+                        androidBtn.style.display = 'flex';
+                        iosBtn.style.display = 'flex';
+                        h5Btn.style.display = 'flex';
+                    }
+                }
+            }
+
+            // 客服按钮跳转百度功能
+            function initCustomerServiceBtn() {
+                const serviceBtn = document.getElementById('customerServiceBtn');
+                serviceBtn.addEventListener('click', function() {
+                    // 在新标签页打开百度（避免离开当前页面）
+                    window.open('https://www.baidu.com', '_blank');
+                });
+            }
+
+            // 初始化所有功能
+            initSlider();
+            detectDeviceAndShowButtons();
+            initCustomerServiceBtn(); // 初始化客服按钮跳转
+            
+            // 窗口大小改变时重新检测设备（应对响应式变化）
+            window.addEventListener('resize', detectDeviceAndShowButtons);
+        });
+    </script>
+</body>
+<style>
+    /* 基础样式重置 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        min-height: 100vh;
+        background: url('') no-repeat center center fixed;
+        background-size: cover;
+        position: relative;
+        overflow: hidden;
+        font-family: Arial, "Microsoft Yahei", sans-serif;
+    }
+
+    /* 右上角链接容器 */
+    .top-links {
+        position: absolute;
+        top: 3%;
+        right: 3%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        max-width: 40%;
+    }
+
+    /* 右侧客服 - 独立设置 */
+    .right-service {
+        position: fixed;
+        top: 90%;
+        right: 20px;
+        transform: translateY(-50%);
+        animation: float-right 2s ease-in-out infinite;
+        z-index: 1000;
+    }
+
+    /* 左侧客服 - 独立设置 */
+    .left-service {
+        position: fixed;
+        top: 90%;
+        left: 20px;
+        transform: translateY(-50%);
+        animation: float-left 2s ease-in-out infinite;
+        z-index: 1000;
+    }
+
+    /* 图片链接通用样式 */
+    .image-link {
+        display: block;
+        transition: all 0.3s ease;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    /* 右侧客服图片 */
+    .right-service img {
+        width: 150px;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    /* 左侧客服图片 */
+    .left-service img {
+        width: 300px; /* 可单独修改尺寸 */
+        height: auto;
+        border-radius: 8px; /* 可单独修改圆角 */
+    }
+
+    /* 右侧客服悬停效果 */
+    .right-service:hover {
+        transform: translateY(-50%) scale(1.1);
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+    }
+
+    /* 左侧客服悬停效果 */
+    .left-service:hover {
+        transform: translateY(-50%) scale(1.1); /* 可单独修改缩放比例 */
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4)); /* 可单独修改阴影 */
+    }
+
+    /* 右侧浮动动画（可独立调整） */
+    @keyframes float-right {
+        0%, 100% {
+            transform: translateY(-50%) translateY(0);
+        }
+        50% {
+            transform: translateY(-50%) translateY(-10px);
+        }
+    }
+
+    /* 左侧浮动动画（可独立调整） */
+    @keyframes float-left {
+        0%, 100% {
+            transform: translateY(-50%) translateY(0);
+        }
+        50% {
+            transform: translateY(-50%) translateY(-10px); /* 可单独修改浮动距离 */
+        }
+    }
+
+    /* 手机端适配 - 分别设置 */
+    @media (max-width: 768px) {
+        .top-links {
+            gap: 10px;
+            max-width: 60%;
+        }
+        /* 右侧客服移动端设置 */
+        .right-service {
+            right: 10px;
+        }
+        .right-service img {
+            width: 100px !important;
+        }
+        /* 左侧客服移动端设置 */
+        .left-service {
+            left: 50px;
+        }
+        .left-service img {
+            width: 200px !important; /* 可单独修改移动端尺寸 */
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .top-links {
+            gap: 20px;
+        }
+    }
+</style>
+
+<!-- 右侧在线客服（可单独修改链接和图片） -->
+<a href="https://tawk.to/chat/69008f9a5d2b45194d82e4f9/1j8l31tmh" class="image-link right-service" target="_blank">
+    <img src="./tu/kefu.png" alt="右侧在线客服">
+</a>
+
+<!-- 左侧在线客服（可单独修改链接和图片） -->
+<a href="https://13t.cn/" class="image-link left-service" target="_blank">
+    <img src="./tu/sg.png" alt="左侧在线客服">
+</a>
+
+</html>
